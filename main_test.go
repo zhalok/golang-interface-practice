@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"go-practice/model"
+	"go-practice/repository"
+	"go-practice/service"
 	"testing"
 )
 
 type ProductRepositoryMockImplSuccess struct {
 }
 
-func (pr *ProductRepositoryMockImplSuccess) getProductsByCategory(category string) ([]Product, error) {
+func (pr *ProductRepositoryMockImplSuccess) GetProductsByCategory(category string) ([]model.Product, error) {
 	fmt.Println("Mocking product repository...")
-	return []Product{
+	return []model.Product{
 		{
 			Name:     "Laptop",
 			Price:    1000.00,
@@ -29,9 +32,9 @@ func (pr *ProductRepositoryMockImplSuccess) getProductsByCategory(category strin
 type ProductRepositoryMockImplFailed struct {
 }
 
-func (pr *ProductRepositoryMockImplFailed) getProductsByCategory(category string) ([]Product, error) {
+func (pr *ProductRepositoryMockImplFailed) GetProductsByCategory(category string) ([]model.Product, error) {
 	fmt.Println("Mocking product repository...")
-	return []Product{
+	return []model.Product{
 		{
 			Name:     "Laptop",
 			Price:    1000.00,
@@ -50,7 +53,7 @@ func (pr *ProductRepositoryMockImplFailed) getProductsByCategory(category string
 func TestMain(t *testing.T) {
 
 	cases := []struct {
-		productRepository ProductRepository
+		productRepository repository.ProductRepository
 		expected          int
 	}{
 		{
@@ -61,13 +64,13 @@ func TestMain(t *testing.T) {
 		{
 			productRepository: &ProductRepositoryMockImplFailed{},
 
-			expected: 1,
+			expected: 2,
 		},
 	}
 	for _, c := range cases {
-		productService := ProductService{
-			productRepository: c.productRepository}
-		availableProducts, error := productService.getAvaialbleProducts("Electronics")
+		productService := service.ProductService{
+			ProductRepository: c.productRepository}
+		availableProducts, error := productService.GetAvaialbleProducts("Electronics")
 		if error != nil {
 			panic(error)
 		}
